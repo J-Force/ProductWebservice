@@ -1,6 +1,8 @@
 package product.entity;
 
 import java.io.Serializable;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -9,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -25,6 +28,10 @@ public class Product implements Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@XmlAttribute
 	private long id;
+	
+	@Transient
+	private AtomLinks links = null;
+	
 	private String name;
 //	@XmlElement(required=true,nillable=false)
 	private String description;
@@ -34,7 +41,39 @@ public class Product implements Serializable {
 	private String size;
 	private String sex;
 	private double quantity;
-	
+
+	public Product() {
+
+	}
+
+	public Product(long id) {
+		this.id = id;
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
 	public double getCost() {
 		return cost;
 	}
@@ -83,50 +122,25 @@ public class Product implements Serializable {
 		this.quantity = quantity;
 	}
 
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
-
-	public Product() {
-
-	}
-
-//	public Product() {
-//		
-//	}
-
-	public Product(long id) {
-		this.id = id;
-	}
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
 	@Override
 	public String toString() {
 		return String.format("[%ld] %s (%s)", id, name, description);
 	}
+	
+	@XmlElement(name = "link", namespace = AtomLink.NAMESPACE_ATOM)
+    public AtomLinks getLink() {
+        if (this.links == null) {
+        	try {
+	        	AtomLink self = new AtomLink(new URI(AtomLink.PRODUCT_PATH + id));
+	    		AtomLinks links = new AtomLinks();
+	    		links.add(self);
+	            this.links = links;
+        	} catch (URISyntaxException e) {
+        		e.printStackTrace();
+        	}
+        }
+        return this.links;
+    }
 
 	/**
 	 * Two contacts are equal if they have the same id, even if other attributes
