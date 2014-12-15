@@ -3,6 +3,9 @@ ProductWebservice
 
 Webservice that provide product's information.Provide 2 method to acquire information. First, Retrieve all product information. Second, Retrieve specific product information by id of product.
 
+## Demo
+* http://128.199.212.108:8080/api/v1/products
+
 ## Description of Application
 * Fashion Clothing e-Commerce
 * Main Website : Link - under construction -
